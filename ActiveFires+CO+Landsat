@@ -133,12 +133,14 @@ Map.addLayer(Landsat9, visualizationFire, 'False Colour (754)');
 Map.addLayer(Landsat9, visualizationFC, 'False Colour (543)');
 Map.addLayer(
   {eeObject: NDVI,
-   visParams: {palette : ['purple','white','green'], min: -0.7, max: 0.7},
+   visParams: {palette : ['purple','white','green'], 
+   min: -0.7, max: 0.7},
    name: 'NDVI'
   });
 Map.addLayer(
   {eeObject: NBR,
-    visParams: {palette : ['purple','white','green'], min: -0.7, max: 0.7},
+    visParams: {palette : ['purple','white','green'], 
+    min: -0.7, max: 0.7},
     name: 'NBR'
   });
 Map.addLayer({eeObject: fires, visParams: firesVis, name: 'Active Fires'}); //adds the fires to the map
