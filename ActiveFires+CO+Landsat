@@ -14,7 +14,7 @@ var Fire_dataset = ee.ImageCollection('FIRMS') //Adjust the name of the dataset
 .filter(
     ee.Filter.date(start_date, end_date) //filters the data to a date range
     );
-var fires = Fire_dataset.select('T21'); //selects a 'band' in Fire_dataset called 'T21'
+var fires = Fire_dataset.select('T21').mean(); //selects a 'band' in Fire_dataset called 'T21'
 
 //Tropomi/Sentinel-5P Carbon Monoxide
 var CO_collection = ee.ImageCollection('COPERNICUS/S5P/NRTI/L3_CO')
@@ -145,7 +145,6 @@ Map.addLayer(
   });
 Map.addLayer({eeObject: fires, visParams: firesVis, name: 'Active Fires'}); //adds the fires to the map
 Map.addLayer({eeObject: Ontario, opacity: 0.5, name: 'Ontario'}); // add Ontario to the map
-
 
 //Export.image.toDrive({
 //  image: Landsat9, 
