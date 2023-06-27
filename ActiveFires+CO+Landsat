@@ -1,5 +1,19 @@
+/**** Start of imports. If edited, may not auto-convert in the playground. ****/
+var geometry = 
+    /* color: #0b4a8b */
+    /* displayProperties: [
+      {
+        "type": "rectangle"
+      }
+    ] */
+    ee.Geometry.Polygon(
+        [[[-74.90119061113464, 49.32988316189279],
+          [-74.90119061113464, 49.121360923427595],
+          [-74.61211285234558, 49.121360923427595],
+          [-74.61211285234558, 49.32988316189279]]], null, false);
+/***** End of imports. If edited, may not auto-convert in the playground. *****/
 //General Settings:
-var start_date = '2023-06-01';
+var start_date = '2023-05-01';
 var end_date = '2023-06-30';
 
 //Datasets
@@ -134,7 +148,7 @@ Map.addLayer(Landsat9, visualizationFC, 'False Colour (543)');
 Map.addLayer(
   {eeObject: NDVI,
    visParams: {palette : ['purple','white','green'], 
-   min: -0.7, max: 0.7},
+   min: 0, max: 0.7},
    name: 'NDVI'
   });
 Map.addLayer(
@@ -145,3 +159,13 @@ Map.addLayer(
   });
 Map.addLayer({eeObject: fires, visParams: firesVis, name: 'Active Fires'}); //adds the fires to the map
 Map.addLayer({eeObject: Ontario, opacity: 0.5, name: 'Ontario'}); // add Ontario to the map
+
+
+Export.image.toDrive({
+  image: Landsat9, 
+  folder: "yourAssignment4Folder",
+  fileNamePrefix: "yourFileName",
+  region: geometry,
+  crsTransform: Landsat9.select('red').projection().getInfo().transform,
+  crs: Landsat9.select('red').projection().getInfo().crs
+  });
