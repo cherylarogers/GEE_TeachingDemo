@@ -147,14 +147,14 @@ Map.addLayer({eeObject: fires, visParams: firesVis, name: 'Active Fires'}); //ad
 Map.addLayer({eeObject: Ontario, opacity: 0.5, name: 'Ontario'}); // add Ontario to the map
 
 
-Export.image.toDrive({
-  image: Landsat9, 
-  folder: "yourAssignment4Folder",
-  fileNamePrefix: "yourFileName",
-  region: geometry,
-  crsTransform: Landsat9.select('red').projection().getInfo().transform,
-  crs: Landsat9.select('red').projection().getInfo().crs
-  });
+//Export.image.toDrive({
+//  image: Landsat9, 
+//  folder: "yourAssignment4Folder",
+//  fileNamePrefix: "yourFileName",
+//  region: geometry,
+//  crsTransform: Landsat9.select('red').projection().getInfo().transform,
+//  crs: Landsat9.select('red').projection().getInfo().crs
+//  });
   
   
   
