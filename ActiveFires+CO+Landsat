@@ -1,17 +1,3 @@
-/**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var geometry = 
-    /* color: #0b4a8b */
-    /* displayProperties: [
-      {
-        "type": "rectangle"
-      }
-    ] */
-    ee.Geometry.Polygon(
-        [[[-74.90119061113464, 49.32988316189279],
-          [-74.90119061113464, 49.121360923427595],
-          [-74.61211285234558, 49.121360923427595],
-          [-74.61211285234558, 49.32988316189279]]], null, false);
-/***** End of imports. If edited, may not auto-convert in the playground. *****/
 //General Settings:
 var start_date = '2023-05-01';
 var end_date = '2023-06-30';
@@ -169,3 +155,6 @@ Export.image.toDrive({
   crsTransform: Landsat9.select('red').projection().getInfo().transform,
   crs: Landsat9.select('red').projection().getInfo().crs
   });
+  
+  
+  
