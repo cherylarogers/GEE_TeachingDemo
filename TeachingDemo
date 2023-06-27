@@ -94,31 +94,19 @@ var visualizationTrueColor = {
   min: 0.0,
   max: 0.3
 };
-//Map.setCenter(-114.2579, 38.9275, 8);
 
 Map.addLayer(dataset, visualizationFire, 'False Colour (754)');
 Map.addLayer(dataset, visualizationFC, 'False Colour (543)');
 Map.addLayer(dataset, visualizationTrueColor, 'True Colour (432)');
 
-var dataset = ee.ImageCollection('FIRMS').filter(
+var FIRMS = ee.ImageCollection('FIRMS').filter(
     ee.Filter.date(startDate, endDate));
-var fires = dataset.select('T21');
+var fires = FIRMS.select('T21');
 var firesVis = {
   min: 325.0,
   max: 400.0,
   palette: ['red', 'orange', 'yellow'],
 };
-
-
-
-
-
-
-
-
-
-
-
 
 Map.addLayer(fires, firesVis, 'Fires');
 
