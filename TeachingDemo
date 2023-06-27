@@ -1,0 +1,125 @@
+var startDate = '2023-01-01'
+var endDate = '2023-08-31'
+
+
+
+var dataset = ee.ImageCollection('LANDSAT/LC08/C02/T1_L2')
+    .filterDate(startDate, endDate);
+
+// Applies scaling factors.
+function applyScaleFactors(image) {
+  var opticalBands = image.select('SR_B.').multiply(0.0000275).add(-0.2);
+  var thermalBands = image.select('ST_B.*').multiply(0.00341802).add(149.0);
+  return image.addBands(opticalBands, null, true)
+              .addBands(thermalBands, null, true);
+}
+
+var LC8_BANDS = ['SR_B2', 'SR_B3', 'SR_B4', 'SR_B5', 'SR_B6', 'SR_B7', 'ST_B10']; // Landsat 8
+var LC7_BANDS = ['SR_B1', 'SR_B2', 'SR_B3', 'SR_B4', 'SR_B5', 'SR_B7', 'ST_B6']; // Landsat 7
+var LC5_BANDS = ['SR_B1', 'SR_B2', 'SR_B3', 'SR_B4', 'SR_B5', 'SR_B7', 'ST_B6']; // Landsat 5
+var STD_NAMES = ['blue', 'green', 'red', 'nir', 'swir1', 'swir2', 'temp'];
+
+var preprocessLandsat = function (start_year, end_year, start_month, end_month) {
+    var QALandsat = function(image) {
+      var qa = image.select('QA_PIXEL');
+      var DilatedCloud = 1 << 1;
+      var Cirrus = 1 << 2;
+      var Cloud = 1 << 3;
+      var CloudShadow = 1 << 4;
+      var Snow = 1 << 5;
+      var Water = 1 << 7;
+      var mask = qa.bitwiseAnd(DilatedCloud).eq(0)
+        .and(qa.bitwiseAnd(Cirrus).eq(0))
+        .and(qa.bitwiseAnd(Cloud).eq(0))
+        .and(qa.bitwiseAnd(CloudShadow).eq(0))
+        .and(qa.bitwiseAnd(Snow).eq(0))
+        .and(qa.bitwiseAnd(Water).eq(0));
+      return image.updateMask(mask);
+    };
+    
+    var year_start = start_year;
+    var year_end = end_year;
+  var Landsat9 = ee.ImageCollection('LANDSAT/LC09/C02/T1_L2')
+    .filter(ee.Filter.calendarRange(year_start, year_end, 'year'))
+    .filter(ee.Filter.calendarRange(start_month, end_month, 'month'))
+    .map(applyScaleFactors)
+    .map(QALandsat)
+    .select(LC8_BANDS, STD_NAMES)
+    ;
+  var Landsat8 = ee.ImageCollection('LANDSAT/LC08/C02/T1_L2')
+    .filter(ee.Filter.calendarRange(year_start, year_end, 'year'))
+    .filter(ee.Filter.calendarRange(start_month, end_month, 'month'))
+    .map(applyScaleFactors)
+    .map(QALandsat)
+    .select(LC8_BANDS, STD_NAMES)
+  ;
+  
+  var Landsat7 = ee.ImageCollection('LANDSAT/LE07/C02/T1_L2')
+    .filter(ee.Filter.calendarRange(year_start, year_end, 'year'))
+    .filter(ee.Filter.calendarRange(start_month, end_month, 'month'))
+    .map(applyScaleFactors)
+    .map(QALandsat)
+    .select(LC7_BANDS, STD_NAMES)
+    ;
+  
+  var Landsat5 = ee.ImageCollection('LANDSAT/LT05/C02/T1_L2')
+    .filter(ee.Filter.calendarRange(year_start, year_end, 'year'))
+    .filter(ee.Filter.calendarRange(start_month, end_month, 'month'))
+    .map(applyScaleFactors)
+    .map(QALandsat)
+    .select(LC5_BANDS, STD_NAMES)
+    ;
+
+var Landsat_merge = Landsat9.merge(Landsat8).merge(Landsat7).merge(Landsat5);
+return Landsat_merge;
+};
+
+
+dataset = preprocessLandsat(2023,2023,5,6);
+
+var visualizationFC = {
+  bands: ['nir', 'red', 'green'],
+  min: 0.0,
+  max: 0.5,
+  gamma: [0.95,1.1,1]
+};
+
+var visualizationFire = {
+  bands: ['swir2', 'nir', 'red'],
+  min: 0.0,
+  max: 0.5
+};
+var visualizationTrueColor = {
+  bands: ['red', 'green', 'blue'],
+  min: 0.0,
+  max: 0.3
+};
+//Map.setCenter(-114.2579, 38.9275, 8);
+
+Map.addLayer(dataset, visualizationFire, 'False Colour (754)');
+Map.addLayer(dataset, visualizationFC, 'False Colour (543)');
+Map.addLayer(dataset, visualizationTrueColor, 'True Colour (432)');
+
+var dataset = ee.ImageCollection('FIRMS').filter(
+    ee.Filter.date(startDate, endDate));
+var fires = dataset.select('T21');
+var firesVis = {
+  min: 325.0,
+  max: 400.0,
+  palette: ['red', 'orange', 'yellow'],
+};
+
+
+
+
+
+
+
+
+
+
+
+
+Map.addLayer(fires, firesVis, 'Fires');
+
+
