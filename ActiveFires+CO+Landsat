@@ -1,5 +1,5 @@
 //General Settings:
-var start_date = '2023-05-01';
+var start_date = '2023-06-01';
 var end_date = '2023-06-30';
 
 //Datasets
@@ -128,11 +128,9 @@ var visualizationFire = {
 Map.centerObject({object: Ontario, zoom: 4}); //Centers the map on Ontario, at zoom level 4
 
 Map.addLayer(CO_collection.mean(), COviz, 'S5P CO'); //adds mean CO column density to the map
-Map.addLayer({eeObject: Ontario, opacity: 0.5, name: 'Ontario'}); // add Ontario to the map
-Map.addLayer({eeObject: fires, visParams: firesVis, name: 'Fires'}); //adds the fires to the map
+Map.addLayer(Landsat9, visualizationTrueColor, 'True Colour (432)');
 Map.addLayer(Landsat9, visualizationFire, 'False Colour (754)');
 Map.addLayer(Landsat9, visualizationFC, 'False Colour (543)');
-Map.addLayer(Landsat9, visualizationTrueColor, 'True Colour (432)');
 Map.addLayer(
   {eeObject: NDVI,
    visParams: {palette : ['purple','white','green'], min: -0.7, max: 0.7},
@@ -143,3 +141,5 @@ Map.addLayer(
     visParams: {palette : ['purple','white','green'], min: -0.7, max: 0.7},
     name: 'NBR'
   });
+Map.addLayer({eeObject: fires, visParams: firesVis, name: 'Active Fires'}); //adds the fires to the map
+Map.addLayer({eeObject: Ontario, opacity: 0.5, name: 'Ontario'}); // add Ontario to the map
