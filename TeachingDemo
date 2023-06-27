@@ -1,5 +1,5 @@
-var startDate = '2023-06-01'
-var endDate = '2023-06-30'
+var startDate = '2023-06-01';
+var endDate = '2023-06-30';
 
 // function to apply Landsat scaling factors.
 function applyScaleFactors(image) {
@@ -53,13 +53,18 @@ var Landsat9 = ee.ImageCollection('LANDSAT/LC09/C02/T1_L2') //Loads the Landsat 
     .filterDate(startDate, endDate) //filters the image collection by date
     .map(applyScaleFactors) //applies the applyScaleFactors function to each image in the collection
     .map(QALandsat) //applies the QALandsat function to each image in the collection
-    .select(L9_BANDS, STD_NAMES) //selects only the bands we want, and renames them 
+    .select(L9_BANDS, STD_NAMES) //selects only the bands we want, and renames them
     .median() ; //calculates the median pixel value across the filtered, masked, collection.
     // The 'median()' is a function called a 'reducer' in earth engine that converts an image collection 
     // to a single image.
-    
-var NDVI = Landsat9.select('nir').subtract(Landsat9.select('red')).divide(Landsat9.select('nir').add(Landsat9.select('red')));
-var NBR = Landsat9.select('nir').subtract(Landsat9.select('swir2')).divide(Landsat9.select('nir').add(Landsat9.select('swir2')));
+
+// NDVI = (NIR-RED)/(NIR+RED)
+var NDVI = Landsat9.select('nir').subtract(Landsat9.select('red'))
+   .divide(Landsat9.select('nir').add(Landsat9.select('red')));
+
+// NBR = (NIR-SWIR)/(NIR+SWIR)
+var NBR = Landsat9.select('nir').subtract(Landsat9.select('swir2'))
+  .divide(Landsat9.select('nir').add(Landsat9.select('swir2')));
 
 var visualizationFC = {
   bands: ['nir', 'red', 'green'],
