@@ -1,6 +1,12 @@
 //General Settings:
-var start_date = '2023-05-01';
-var end_date = '2023-06-30';
+
+//Date range for active fire and carbon monoxide data:
+var start_date_fire_co = '2023-06-01';
+var end_date_fire_co = '2023-06-15';
+
+//Date range for Landsat imagery:
+var start_date_landsat = '2023-06-15';
+var end_date_landsat = '2023-06-30';
 
 //Datasets
 //Provincial Boundary
@@ -12,14 +18,14 @@ var Ontario = ee.FeatureCollection('FAO/GAUL_SIMPLIFIED_500m/2015/level1')
 //FIRMS Active Fires
 var Fire_dataset = ee.ImageCollection('FIRMS') //Adjust the name of the dataset
 .filter(
-    ee.Filter.date(start_date, end_date) //filters the data to a date range
+    ee.Filter.date(start_date_fire_co, end_date_fire_co) //filters the data to a date range
     );
 var fires = Fire_dataset.select('T21').mean(); //selects a 'band' in Fire_dataset called 'T21'
 
 //Tropomi/Sentinel-5P Carbon Monoxide
 var CO_collection = ee.ImageCollection('COPERNICUS/S5P/NRTI/L3_CO')
   .select('CO_column_number_density')
-  .filterDate(start_date, end_date); //filters the collection of images by date
+  .filterDate(start_date_fire_co, end_date_fire_co); //filters the collection of images by date
 
 //Landsat 9
 // function to apply Landsat scaling factors.
@@ -33,17 +39,17 @@ function applyScaleFactors(image) {
 function QALandsat(image) {
       var qa = image.select('QA_PIXEL');
       // QA flags are stored as a bitmask. We need to decode the information in the 16 bit binary number.
-      // The operator << is the left shift operator: so 1 << 1 shifts 0000001 to 0000010.
+      // the leftShift function shifts a binary number by the specified number of positions e.g. 0000001 to 0000010.
       // This allows us to extract the bit we want to check without converting to/from binary numbers.
       // First we identify the bit we're interested in for each quality flag:
       // Note: the first bit position is bit 0
       var DilatedCloud = ee.Number(1).leftShift(1);  // 000000010 i.e. from shifting 0000001 left by 1 position
-      var Cirrus = ee.Number(1).leftShift(2);        // 000000100 i.e. from shifting 0000001 left by 2 positions
-      var Cloud = ee.Number(1).leftShift(3);         // 000001000
-      var CloudShadow = ee.Number(1).leftShift(4);   // 000010000
-      var Snow = ee.Number(1).leftShift(5);          // 000100000
-      var Clear = ee.Number(1).leftShift(6);         // 001000000
-      var Water = ee.Number(1).leftShift(7);         // 010000000
+      var Cirrus =       ee.Number(1).leftShift(2);  // 000000100 i.e. from shifting 0000001 left by 2 positions
+      var Cloud =        ee.Number(1).leftShift(3);  // 000001000
+      var CloudShadow =  ee.Number(1).leftShift(4);  // 000010000
+      var Snow =         ee.Number(1).leftShift(5);  // 000100000
+      var Clear =        ee.Number(1).leftShift(6);  // 001000000
+      var Water =        ee.Number(1).leftShift(7);  // 010000000
 
       // Next we test if the bit value in the QA pixel 
       // and our value defined above are set to 0 in the bit position we're interested in
@@ -71,7 +77,7 @@ var L9_BANDS = ['SR_B2', 'SR_B3', 'SR_B4', 'SR_B5', 'SR_B6', 'SR_B7', 'ST_B10'];
 var STD_NAMES = ['blue', 'green', 'red', 'nir', 'swir1', 'swir2', 'temp'];
 
 var Landsat9 = ee.ImageCollection('LANDSAT/LC09/C02/T1_L2') //Loads the Landsat 9 image collection
-    .filterDate(start_date, end_date) //filters the image collection by date
+    .filterDate(start_date_landsat, end_date_landsat) //filters the image collection by date
     .map(applyScaleFactors) //applies the applyScaleFactors function to each image in the collection
     .map(QALandsat) //applies the QALandsat function to each image in the collection
     .select(L9_BANDS, STD_NAMES) //selects only the bands we want, and renames them
@@ -125,6 +131,7 @@ var visualizationFire = {
 
 
 //Add layers to the map:
+
 Map.centerObject({object: Ontario, zoom: 4}); //Centers the map on Ontario, at zoom level 4
 
 Map.addLayer(CO_collection.mean(), COviz, 'S5P CO'); //adds mean CO column density to the map
