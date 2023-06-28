@@ -11,7 +11,7 @@ var Fire_dataset = ee.ImageCollection('FIRMS') //Adjust the name of the dataset
     ee.Filter.date(start_date, end_date) //filters the data to a date range
     );
 var fires = Fire_dataset.select('T21'); //selects a 'band' in Fire_dataset called 'T21'
-var firesVis = { //sets up visualization settings (this is used later in line 12)
+var firesVis = { //sets up visualization settings 
   min: 325.0,
   max: 400.0,
   palette: ['red', 'orange', 'yellow'],
