@@ -53,7 +53,7 @@ function QALandsat(image) {
 
       // Next we test if the bit value in the QA pixel 
       // and our value defined above are set to 0 in the bit position we're interested in
-      // i.e. bitwiseAnd of 1101110000 and 
+      // i.e. bitwiseAnd of 110111000 and 
       //                    001000000 is 0000000000, or equal to 0
       // whereas bitwiseAnd of  001001000 and
       //                        001000000 is 001000000, or not equal to 0
